@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operator-sample-kustomize
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: operator-sample-kustomize
+  template:
+    metadata:
+      labels:
+        name: operator-sample-kustomize
+    spec:
+      serviceAccountName: operator-sample-kustomize
+      containers:
+        - name: operator-sample-kustomize
+          # Replace this with the built image name
+          image: REPLACE_IMAGE
+          command:
+          - operator-sample-kustomize
+          imagePullPolicy: Always
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "operator-sample-kustomize"
+            - name: TEMPLATES_PATH
+              value: "/usr/local/templates"
+            - name: COMPONENTS
+              value: "component-1, component-2"

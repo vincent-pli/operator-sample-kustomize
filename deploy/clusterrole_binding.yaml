@@ -1,11 +1,12 @@
-kind: RoleBinding
+kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: operator-sample-kustomize
 subjects:
 - kind: ServiceAccount
   name: operator-sample-kustomize
+  namespace: operator-sample
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: operator-sample-kustomize
   apiGroup: rbac.authorization.k8s.io

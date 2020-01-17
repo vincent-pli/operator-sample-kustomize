@@ -5,3 +5,4 @@ metadata:
 spec:
   # Add fields here
   injectns: true
+  ownerset: true

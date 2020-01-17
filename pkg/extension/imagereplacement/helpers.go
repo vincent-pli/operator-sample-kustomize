@@ -19,12 +19,12 @@ import (
 	"fmt"
 
 	"github.com/go-logr/logr"
-	baremetalhostv1alpha1 "github.com/vincent-pli/metal3-operator/pkg/apis/baremetalhost/v1alpha1"
+	operatorv1alpha1 "github.com/vincent-pli/operator-sample-kustomize/pkg/apis/install/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 )
 
-func UpdateDeployment(deploy *appsv1.Deployment, registry *baremetalhostv1alpha1.Registry, log logr.Logger) error {
+func UpdateDeployment(deploy *appsv1.Deployment, registry *operatorv1alpha1.Registry, log logr.Logger) error {
 	containers := deploy.Spec.Template.Spec.Containers
 	for index := range containers {
 		container := &containers[index]
@@ -49,7 +49,7 @@ func UpdateDeployment(deploy *appsv1.Deployment, registry *baremetalhostv1alpha1
 	return nil
 }
 
-func getNewImage(registry *baremetalhostv1alpha1.Registry, key string) string {
+func getNewImage(registry *operatorv1alpha1.Registry, key string) string {
 	overrideImage := registry.Override[key]
 	if overrideImage != "" {
 		return overrideImage

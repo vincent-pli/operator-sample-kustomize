@@ -16,8 +16,8 @@ limitations under the License.
 package imagereplacement
 
 import (
-	baremetalhostv1alpha1 "github.com/vincent-pli/metal3-operator/pkg/apis/baremetalhost/v1alpha1"
-	"github.com/vincent-pli/metal3-operator/pkg/extension/common"
+	operatorv1alpha1 "github.com/vincent-pli/operator-sample-kustomize/pkg/apis/install/v1alpha1"
+	"github.com/vincent-pli/operator-sample-kustomize/pkg/extension/common"
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -29,16 +29,16 @@ var (
 	extension = common.Extension{
 		Transformers: []common.Transformer{egress},
 	}
-	log       = logf.Log.WithName("image-replacement")
-	scheme    *runtime.Scheme
-	baremetal baremetalhostv1alpha1.Baremetal
+	log      = logf.Log.WithName("image-replacement")
+	scheme   *runtime.Scheme
+	instance *operatorv1alpha1.Install
 )
 
 // Configure minikube if we're soaking in it
-func Configure(c client.Client, s *runtime.Scheme, baremetal *baremetalhostv1alpha1.Baremetal) (*common.Extension, error) {
-	if baremetal.Spec.Registry.Override != nil {
+func Configure(c client.Client, s *runtime.Scheme, install *operatorv1alpha1.Install) (*common.Extension, error) {
+	if install.Spec.Registry.Override != nil {
 		scheme = s
-		baremetal = baremetal
+		instance = install
 		return &extension, nil
 	}
 
@@ -51,7 +51,7 @@ func egress(u *unstructured.Unstructured) error {
 		if err := scheme.Convert(u, deploy, nil); err != nil {
 			return err
 		}
-		registry := baremetal.Spec.Registry
+		registry := instance.Spec.Registry
 		err := UpdateDeployment(deploy, &registry, log)
 		if err != nil {
 			return err

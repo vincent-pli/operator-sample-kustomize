@@ -19,7 +19,7 @@ var (
 )
 
 func Configure(c client.Client, s *runtime.Scheme, install *operatorsv1alpha1.Install) (*common.Extension, error) {
-	if *install.Spec.SetOwner {
+	if install.Spec.SetOwner != nil {
 		scheme = s
 		instance = install
 		return &extension, nil

@@ -4,5 +4,5 @@ metadata:
   name: example-install
 spec:
   # Add fields here
-  injectns: true
-  ownerset: true
+  targetNamespace: operator-sample
+  setowner: true

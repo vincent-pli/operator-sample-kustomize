@@ -4,8 +4,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/vincent-pli/operator-sample-kustomize/pkg/extension/common"
 	operatorsv1alpha1 "github.com/vincent-pli/operator-sample-kustomize/pkg/apis/install/v1alpha1"
+	"github.com/vincent-pli/operator-sample-kustomize/pkg/extension/common"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -20,8 +20,8 @@ var (
 )
 
 func Configure(c client.Client, s *runtime.Scheme, install *operatorsv1alpha1.Install) (*common.Extension, error) {
-	if *install.Spec.InjectNS {
-		namespace = install.GetNamespace()
+	if &install.Spec.TargetNamespace != nil {
+		namespace = install.Spec.TargetNamespace
 		return &extension, nil
 	}
 

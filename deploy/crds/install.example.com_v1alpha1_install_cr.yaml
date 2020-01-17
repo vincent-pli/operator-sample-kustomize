@@ -6,3 +6,6 @@ spec:
   # Add fields here
   targetNamespace: operator-sample
   setowner: true
+  registry: 
+    override:
+      baremetal-operator: vincentpli/baremetal-operator:v0.1

@@ -9,18 +9,20 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 )
 
 var (
 	extension = common.Extension{
 		Transformers: []common.Transformer{egress},
 	}
-
+	log       = logf.Log.WithName("namespace-injection")
 	namespace string
 )
 
 func Configure(c client.Client, s *runtime.Scheme, install *operatorsv1alpha1.Install) (*common.Extension, error) {
-	if &install.Spec.TargetNamespace != nil {
+	if install.Spec.TargetNamespace != "" {
+		log.Info("Enable extension: nsInjection")
 		namespace = install.Spec.TargetNamespace
 		return &extension, nil
 	}

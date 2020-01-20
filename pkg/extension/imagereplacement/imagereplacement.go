@@ -34,9 +34,9 @@ var (
 	instance *operatorv1alpha1.Install
 )
 
-// Configure minikube if we're soaking in it
 func Configure(c client.Client, s *runtime.Scheme, install *operatorv1alpha1.Install) (*common.Extension, error) {
-	if install.Spec.Registry.Override != nil {
+	if install.Spec.Registry != nil {
+		log.Info("Enalbe extension: Imagereplacement")
 		scheme = s
 		instance = install
 		return &extension, nil
@@ -52,7 +52,7 @@ func egress(u *unstructured.Unstructured) error {
 			return err
 		}
 		registry := instance.Spec.Registry
-		err := UpdateDeployment(deploy, &registry, log)
+		err := UpdateDeployment(deploy, registry, log)
 		if err != nil {
 			return err
 		}

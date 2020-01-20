@@ -1,0 +1,13 @@
+# Example configuration for the webserver
+# at https://github.com/monopole/hello
+#apiVersion: kustomize.config.k8s.io/v1beta1
+#kind: Kustomization
+#namespace: helloworld
+commonLabels:
+  app: hello
+
+resources:
+- namespace.yaml
+- deployment.yaml
+- service.yaml
+- configMap.yaml

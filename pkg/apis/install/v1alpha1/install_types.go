@@ -12,9 +12,9 @@ type InstallSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
-	TargetNamespace string   `json:"targetNamespace" protobuf:"bytes,3,opt,name=targetNamespace"`
-	SetOwner        *bool    `json:"setowner" protobuf:"bytes,3,opt,name=setowner"`
-	Registry        Registry `json:"registry,omitempty"`
+	TargetNamespace string    `json:"targetNamespace" protobuf:"bytes,3,opt,name=targetNamespace"`
+	SetOwner        bool      `json:"setowner" protobuf:"bytes,3,opt,name=setowner"`
+	Registry        *Registry `json:"registry,omitempty"`
 }
 
 // Registry defines image overrides of knative images.

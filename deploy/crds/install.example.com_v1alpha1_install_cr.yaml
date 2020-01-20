@@ -8,4 +8,4 @@ spec:
   setowner: true
   registry: 
     override:
-      baremetal-operator: vincentpli/baremetal-operator:v0.1
+      the-container: monopole/hello:1

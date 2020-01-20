@@ -34,4 +34,4 @@ spec:
             - name: TEMPLATES_PATH
               value: "/usr/local/templates"
             - name: COMPONENTS
-              value: "component-1, component-2"
+              value: "helloworld"

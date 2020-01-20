@@ -40,3 +40,13 @@ spec:
   - name: v1alpha1
     served: true
     storage: true
+  additionalPrinterColumns:
+    - name: State
+      type: string
+      JSONPath: .status.state
+    - name: Version
+      type: string
+      JSONPath: .status.version
+    - name: Reason
+      type: string
+      JSONPath: .status.message

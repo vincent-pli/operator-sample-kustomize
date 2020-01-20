@@ -16,7 +16,7 @@ spec:
       containers:
         - name: operator-sample-kustomize
           # Replace this with the built image name
-          image: REPLACE_IMAGE
+          image: index.docker.io/vincentpli/operator-sample:v0.0.1
           command:
           - operator-sample-kustomize
           imagePullPolicy: Always

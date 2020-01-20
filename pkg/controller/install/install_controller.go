@@ -2,11 +2,13 @@ package install
 
 import (
 	"context"
+	"reflect"
 
 	installv1alpha1 "github.com/vincent-pli/operator-sample-kustomize/pkg/apis/install/v1alpha1"
 	"github.com/vincent-pli/operator-sample-kustomize/pkg/deployer"
 	"github.com/vincent-pli/operator-sample-kustomize/pkg/extension/common"
 	"github.com/vincent-pli/operator-sample-kustomize/pkg/render"
+	"github.com/vincent-pli/operator-sample-kustomize/version"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -90,8 +92,8 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 	reqLogger.Info("Reconciling Install")
 
 	// Fetch the Install instance
-	instance := &installv1alpha1.Install{}
-	err := r.client.Get(context.TODO(), request.NamespacedName, instance)
+	instanceOrigin := &installv1alpha1.Install{}
+	err := r.client.Get(context.TODO(), request.NamespacedName, instanceOrigin)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			// Request object not found, could have been deleted after reconcile request.
@@ -102,19 +104,23 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 		// Error reading the object - requeue the request.
 		return reconcile.Result{}, err
 	}
-
+	instance := instanceOrigin.DeepCopy()
+	instance.Status.MarkInstallRunning()
 	// Get template
 	resources, err := render.NewRenderer(instance).Render()
 	if err != nil {
+		instance.Status.MarkInstallFailed(err.Error())
 		return reconcile.Result{}, err
 	}
 	// Run extensions
 	extensions, err := activities.Extend(r.client, r.scheme, instance)
 	if err != nil {
+		instance.Status.MarkInstallFailed(err.Error())
 		return reconcile.Result{}, err
 	}
 	resources, err = extensions.Transformer(resources, instance)
 	if err != nil {
+		instance.Status.MarkInstallFailed(err.Error())
 		return reconcile.Result{}, err
 	}
 
@@ -122,9 +128,21 @@ func (r *ReconcileInstall) Reconcile(request reconcile.Request) (reconcile.Resul
 	for _, res := range resources {
 		err = deployer.Deploy(r.client, res)
 		if err != nil {
+			instance.Status.MarkInstallFailed(err.Error())
 			return reconcile.Result{}, err
 		}
 	}
 
+	instance.Status.MarkInstallSucceeded(version.Version)
+
+	// Update status
+	if !reflect.DeepEqual(instance.Status, instanceOrigin.Status) {
+		instanceOrigin.Status = instance.Status
+		err := r.client.Status().Update(context.TODO(), instanceOrigin)
+		if err != nil {
+			reqLogger.Error(err, "Failed to update Install status.")
+			return reconcile.Result{}, err
+		}
+	}
 	return reconcile.Result{}, nil
 }

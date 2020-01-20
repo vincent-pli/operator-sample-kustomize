@@ -27,11 +27,37 @@ type Registry struct {
 	Override map[string]string `json:"override,omitempty"`
 }
 
+type InstallState string
+
+const (
+	InstallStateError      InstallState = "Error"
+	InstallStateInstalling InstallState = "Installing"
+	InstallStateInstalled  InstallState = "Installed"
+)
+
 // InstallStatus defines the observed state of Install
 type InstallStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "operator-sdk generate k8s" to regenerate code after modifying this file
 	// Add custom validation using kubebuilder tags: https://book-v1.book.kubebuilder.io/beyond_basics/generating_crd.html
+	State   InstallState `json:"installstate,omitempty"`
+	Version string       `json:"version,omitempty"`
+	Message string       `json:"message,omitempty"`
+}
+
+func (is *InstallStatus) MarkInstallFailed(msg string) {
+	is.State = InstallStateError
+	is.Message = msg
+	is.Version = "-"
+}
+
+func (is *InstallStatus) MarkInstallSucceeded(version string) {
+	is.State = InstallStateInstalled
+	is.Version = version
+}
+
+func (is *InstallStatus) MarkInstallRunning() {
+	is.State = InstallStateInstalling
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

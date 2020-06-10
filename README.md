@@ -53,7 +53,7 @@ The following steps will install sample application for your cluster.
     
 2. Apply Operator CRD
 
-    `kubectl apply -f deploy/crds/install_example.com_installs_crd.yaml`  
+    `kubectl apply -f deploy/crds/install.example.com_installs_crd.yaml`  
     
 3. Deploy the Operator  
 
